@@ -34,7 +34,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y fpc
 
-    - uses: haskell-actions/setup
+    - uses: haskell-actions/setup@v1.1
       name: Setup Haskell
       with:
         ghc-version: 9.10.2
@@ -44,10 +44,15 @@ jobs:
       with:
         toolchain: stable
 
-    - uses: actions/setup-ruby-jruby-and-truffleruby
+    - uses: ruby/setup-ruby@v1
       name: Setup Ruby
       with:
         ruby-version: '3.4'
+
+    - uses: ruby/setup-ruby@v1
+      name: Setup JRuby
+      with:
+        ruby-version: 'jruby'
 
     - uses: ada-actions/toolchain@dev
       name: Setup Ada
