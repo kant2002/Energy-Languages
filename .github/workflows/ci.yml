@@ -19,7 +19,7 @@ jobs:
         dotnet-version: '8.x'
 
     - uses: fortran-lang/setup-fortran@v1
-      id: setup-fortran
+      name: Setup Fortran
       with:
         compiler: intel
         version: "2025.0"
@@ -28,7 +28,38 @@ jobs:
       run: |
         sudo apt-get install -y sbcl
 
-    - run: |
+    - name: Install FPC
+      run: |
+        export DEBIAN_FRONTEND=noninteractive
+        sudo apt-get update
+        sudo apt-get install -y fpc
+
+    - uses: haskell-actions/setup
+      name: Setup Haskell
+      with:
+        ghc-version: 9.10.2
+
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+      name: Setup Rust
+      with:
+        toolchain: stable
+
+    - uses: actions/setup-ruby-jruby-and-truffleruby
+      name: Setup Ruby
+      with:
+        ruby-version: '3.4'
+
+    - uses: ada-actions/toolchain@dev
+      name: Setup Ada
+      with:
+        distrib: fsf
+        target: native
+
+    - name: Prepare build env
+      run: |
         pip install -r requirements.txt
         ./gen-input.sh
+
+    - name: Run tests
+      run: |
         python compile_all.py
