@@ -63,6 +63,7 @@ jobs:
     - name: Prepare build env
       run: |
         pip install -r requirements.txt
+        sudo apt-get install -y libpcre-dev
         ./gen-input.sh
 
     - name: Run tests
