@@ -34,10 +34,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y fpc
 
-    - uses: haskell-actions/setup@v1.1
+    - uses: haskell-actions/setup@v2.8
       name: Setup Haskell
       with:
-        ghc-version: 9.10.2
+        ghc-version: 9.12.2 
 
     - uses: actions-rust-lang/setup-rust-toolchain@v1
       name: Setup Rust
