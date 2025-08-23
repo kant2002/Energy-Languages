@@ -19,6 +19,6 @@ jobs:
         dotnet-version: '8.x'
 
     - run: |
-        pip -r requriements.txt
+        pip install -r requirements.txt
         ./gen-input.sh
         python compile_all.py
