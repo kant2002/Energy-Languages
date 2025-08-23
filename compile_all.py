@@ -17,6 +17,7 @@ def main():
     print('Checking ' + root)
     runignore = os.path.join(root, ".runignore")
     if file_exists(runignore):
+      print('Skipping ' + root + ' since it is ignore using .runignore')
       continue
     makefile = os.path.join(root, "Makefile")
     if file_exists(makefile):
