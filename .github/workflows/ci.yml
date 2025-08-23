@@ -18,9 +18,11 @@ jobs:
       with:
         dotnet-version: '8.x'
 
-    - name: Setup Fortran
-      run: |
-        sudo apt install -y intel-oneapi-compiler-fortran
+    - uses: fortran-lang/setup-fortran@v1
+        id: setup-fortran
+        with:
+          compiler: compiler
+          version: 2025.0
 
     - name: Setup Lisp
       run: |
