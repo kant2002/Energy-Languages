@@ -21,7 +21,7 @@ jobs:
     - uses: fortran-lang/setup-fortran@v1
       id: setup-fortran
       with:
-        compiler: compiler
+        compiler: intel
         version: 2025.0
 
     - name: Setup Lisp
