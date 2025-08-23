@@ -15,6 +15,9 @@ def main():
   has_error = False
   for root, dirs, files in os.walk(path):
     print('Checking ' + root)
+    runignore = os.path.join(root, ".runignore")
+    if file_exists(runignore):
+      continue
     makefile = os.path.join(root, "Makefile")
     if file_exists(makefile):
       cmd = 'cd ' + root + '; make ' + action
