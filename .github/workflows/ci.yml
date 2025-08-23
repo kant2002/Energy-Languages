@@ -1,0 +1,23 @@
+name: Build
+
+on: [pull_request]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        #os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    # Not specifying a version will attempt to install via global.json
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x'
+
+    - run: |
+        ./gen-input.sh
+        python compile_all.py
