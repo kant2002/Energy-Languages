@@ -15,9 +15,11 @@ def main():
   has_error = False
   for root, dirs, files in os.walk(path):
     print('Checking ' + root)
-    runignore = os.path.join(root, ".runignore")
-    if file_exists(runignore):
+    if file_exists(os.path.join(root, ".runignore")):
       print('Skipping ' + root + ' since it is ignore using .runignore')
+      continue
+    if file_exists(os.path.join(root, "..", ".runignore")):
+      print('Skipping ' + root + ' since it is ignore using parent .runignore')
       continue
     makefile = os.path.join(root, "Makefile")
     if file_exists(makefile):
