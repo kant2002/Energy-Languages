@@ -18,6 +18,14 @@ jobs:
       with:
         dotnet-version: '8.x'
 
+    - name: Setup Fortran
+      run: |
+        sudo apt install -y intel-oneapi-compiler-fortran
+
+    - name: Setup Lisp
+      run: |
+        sudo apt-get install -y sbcl
+
     - run: |
         pip install -r requirements.txt
         ./gen-input.sh
