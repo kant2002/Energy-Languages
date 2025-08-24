@@ -75,6 +75,7 @@ jobs:
     - name: Install Chapel
       run: |
         curl -O https://github.com/chapel-lang/chapel/releases/download/2.5.0/chapel-2.5.0-1.ubuntu24.amd64.deb
+        echo "499ca0b4c2b022f99924544987b7ee3e86458ba2d7ce8ad3d0151bcabf8f09e5  chapel-2.5.0.tar.gz" | shasum -a 256 -c
         dpkg-deb --info ./chapel-2.5.0-1.ubuntu24.amd64.deb
         dpkg-deb --contents ./chapel-2.5.0-1.ubuntu24.amd64.deb
         sudo apt-get install -y ./chapel-2.5.0-1.ubuntu24.amd64.deb
