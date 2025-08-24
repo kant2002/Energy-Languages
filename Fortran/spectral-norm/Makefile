@@ -1,5 +1,5 @@
 compile:
-	ifx -O3 -fast -qopenmp spectralnorm.ifc-3.f90 -o spectralnorm.ifc-3.ifc_run
+	ifx -O3 -qopenmp spectralnorm.ifc-3.f90 -o spectralnorm.ifc-3.ifc_run
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./spectralnorm.ifc-3.ifc_run 5500" Fortran spectral-norm
