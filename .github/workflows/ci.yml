@@ -73,6 +73,8 @@ jobs:
         install-rebar3: true
 
     - uses: SwiftyLab/setup-swift@latest
+    
+    - uses: actions-rkt/install@v1
 
     - name: Install Chapel
       run: |

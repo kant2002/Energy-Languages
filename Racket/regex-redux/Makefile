@@ -1,5 +1,5 @@
 compile:
-	/usr/local/src/racket-6.8/bin/raco make regexredux.racket
+	raco make regexredux.racket
 
 measure:
 	sudo modprobe msr

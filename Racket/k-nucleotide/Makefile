@@ -1,5 +1,5 @@
 compile:
-	/usr/local/src/racket-6.8/bin/raco make knucleotide.racket-4.racket
+	raco make knucleotide.racket-4.racket
 
 measure:
 	sudo modprobe msr

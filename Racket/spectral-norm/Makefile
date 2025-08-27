@@ -1,5 +1,5 @@
 compile:
-	/usr/local/src/racket-6.8/bin/raco make spectralnorm.racket-3.racket
+	raco make spectralnorm.racket-3.racket
 
 measure:
 	sudo modprobe msr

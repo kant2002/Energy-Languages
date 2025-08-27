@@ -1,5 +1,5 @@
 compile:
-	/usr/local/src/racket-6.8/bin/raco make fasta.racket-3.racket
+	raco make fasta.racket-3.racket
 
 measure:
 	sudo modprobe msr
