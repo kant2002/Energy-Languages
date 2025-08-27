@@ -1,5 +1,4 @@
-compile:i
-
+compile:
 
 measure:
 	sudo modprobe msr
