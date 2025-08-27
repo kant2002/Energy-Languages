@@ -1,6 +1,6 @@
 compile:
 	cp nbody.typescript-3.typescript nbody.typescript-3.ts
-	/usr/local/src/node-v7.9.0-linux-x64/bin/tsc --alwaysStrict -t ESNEXT  nbody.typescript-3.ts
+	tsc --alwaysStrict -t ESNEXT  nbody.typescript-3.ts
 
 measure:
 	sudo modprobe msr

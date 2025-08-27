@@ -1,6 +1,6 @@
 compile:
 	cp fasta.typescript fasta.ts
-	/usr/local/src/node-v7.9.0-linux-x64/bin/tsc --alwaysStrict -t ESNEXT  fasta.ts
+	tsc --alwaysStrict -t ESNEXT  fasta.ts
 
 measure:
 	sudo modprobe msr
