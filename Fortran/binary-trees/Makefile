@@ -1,5 +1,5 @@
 compile:
-	ifx -O3 -xHost -qopenmp -static-intel binarytrees.ifc-2.f90 -o binarytrees.ifc-2.ifc_run
+	ifx -O3 -xHost -qopenmp -static-intel -lapr-1 binarytrees.ifc-2.f90 -o binarytrees.ifc-2.ifc_run
 
 measure:
 	sudo modprobe msr

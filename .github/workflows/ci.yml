@@ -90,7 +90,7 @@ jobs:
     - name: Prepare build env
       run: |
         pip install -r requirements.txt
-        sudo apt-get install -y libpcre3 libpcre3-dev libboost-regex-dev libhts-dev libapr1-dev
+        sudo apt-get install -y libpcre3 libpcre3-dev libboost-regex-dev libhts-dev libapr1-dev libaprutil1-dev
         ./gen-input.sh
 
     - name: Run tests
