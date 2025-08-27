@@ -96,4 +96,5 @@ jobs:
     - name: Run tests
       run: |
         eval $(opam env)
+        export CHPL_TARGET_COMPILER=gnu
         python compile_all.py
