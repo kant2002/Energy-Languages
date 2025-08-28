@@ -1,4 +1,5 @@
 compile:
+	echo ${CHPL_TARGET_COMPILER}
 	chpl --fast binarytrees.chpl -o binarytrees.chapel_run
 measure:
 	sudo modprobe msr
