@@ -1,5 +1,5 @@
 compile:
-	swiftc binarytrees.swift-9.swift -Ounchecked -whole-module-optimization -I/usr/local/opt/apr/include/apr-1 -lapr-1 -L/usr/local/opt/apr/lib -o binarytrees.swift-9.swift_run
+	swiftc binarytrees.swift-9.swift -Ounchecked -whole-module-optimization -I/usr/include/apr-1/ -lapr-1 -o binarytrees.swift-9.swift_run
 
 xmeasure:
 	sudo modprobe msr
