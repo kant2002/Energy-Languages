@@ -14,6 +14,10 @@ def file_exists(file_path):
 def main():
   has_error = False
   for root, dirs, files in os.walk(path):
+    if "_opam" in root:
+      continue
+    if "node_modules" in root:
+      continue
     print('Checking ' + root)
     if file_exists(os.path.join(root, ".runignore")):
       print('Skipping ' + root + ' since it is ignore using .runignore')
