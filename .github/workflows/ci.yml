@@ -92,9 +92,12 @@ jobs:
         pip install -r requirements.txt
         sudo apt-get install -y libpcre3 libpcre3-dev libboost-regex-dev libhts-dev libapr1-dev libaprutil1-dev libgmp-dev
         ./gen-input.sh
+        # OCaml specific setup of libraries.
+        opam install batteries
 
     - name: Run tests
       run: |
         eval $(opam env)
+
         export CHPL_TARGET_COMPILER=gnu
         python compile_all.py
