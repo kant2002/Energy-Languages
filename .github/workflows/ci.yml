@@ -98,6 +98,5 @@ jobs:
     - name: Run tests
       run: |
         eval $(opam env)
-
-        export CHPL_TARGET_COMPILER=gnu
+        echo "CHPL_TARGET_COMPILER=gnu" >> $GITHUB_ENV
         python compile_all.py
