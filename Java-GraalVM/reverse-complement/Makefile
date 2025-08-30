@@ -1,15 +1,15 @@
 compile:
 	cp revcomp.java-3.java revcomp.java
-	${JAVA_HOME_20_0}/bin/javac -d .  revcomp.java
+	${JAVA_HOME_21_0}/bin/javac -d .  revcomp.java
 measure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "${JAVA_HOME_20_0}/bin/java   revcomp 0 < ../../revcomp-input25000000.txt" Java reverse-complement
+	sudo ../../RAPL/main "${JAVA_HOME_21_0}/bin/java   revcomp 0 < ../../revcomp-input25000000.txt" Java reverse-complement
 
 run:
-	${JAVA_HOME_20_0}/bin/java   revcomp 0 < ../../revcomp-input25000000.txt
+	${JAVA_HOME_21_0}/bin/java   revcomp 0 < ../../revcomp-input25000000.txt
 
 mem:
-	/usr/bin/time -v ${JAVA_HOME_20_0}/bin/java   revcomp 0 < ../../revcomp-input25000000.txt
+	/usr/bin/time -v ${JAVA_HOME_21_0}/bin/java   revcomp 0 < ../../revcomp-input25000000.txt
 
 valgrind:
-	valgrind --tool=massif --stacks=yes ${JAVA_HOME_20_0}/bin/java   revcomp 0 < ../../revcomp-input25000000.txt
+	valgrind --tool=massif --stacks=yes ${JAVA_HOME_21_0}/bin/java   revcomp 0 < ../../revcomp-input25000000.txt
