@@ -1,14 +1,16 @@
+THIS_FILE_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 compile:
 	ifx -O3 -qopenmp knucleotide.f90 -o knucleotide.ifc_run
 measure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "./knucleotide.ifc_run 0 < knucleotide-input25000000.txt" Fortran k-nucleotide
+	sudo ../../RAPL/main "./knucleotide.ifc_run 0 < ${THIS_FILE_DIR}../../knucleotide-input25000000.txt" Fortran k-nucleotide
 
 run:
-	./knucleotide.ifc_run 0 < knucleotide-input25000000.txt
+	./knucleotide.ifc_run 0 < ${THIS_FILE_DIR}../../knucleotide-input25000000.txt
 
 mem:
-	/usr/bin/time -v  ./knucleotide.ifc_run 0 < knucleotide-input25000000.txt
+	/usr/bin/time -v  ./knucleotide.ifc_run 0 < ${THIS_FILE_DIR}../../knucleotide-input25000000.txt
 
 valgrind:
-	valgrind --tool=massif --stacks=yes  ./knucleotide.ifc_run 0 < knucleotide-input25000000.txt
+	valgrind --tool=massif --stacks=yes  ./knucleotide.ifc_run 0 < ${THIS_FILE_DIR}../../knucleotide-input25000000.txt
