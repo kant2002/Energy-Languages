@@ -99,7 +99,7 @@ jobs:
       uses: dart-lang/setup-dart@v1
 
     - name: Install Lua
-      uses: xpol/setup-lua@v1
+      uses: xpol/setup-lua@v0.1
 
     - name: Prepare build env
       run: |
