@@ -94,16 +94,18 @@ jobs:
         ./gen-input.sh
         # OCaml specific setup of libraries.
         opam install batteries
-        echo "CHPL_TARGET_COMPILER=gnu" >> $GITHUB_ENV
+        echo "CHPL_TARGET_COMPILER=llvm" >> $GITHUB_ENV
 
     - name: Build RAPL
       run: |
         cd RAPL
         make
 
-    - name: Run tests
+    - name: Build tests
       run: |
         eval $(opam env)
-        export CHPL_TARGET_COMPILER=gnu
-        CHPL_TARGET_COMPILER=gnu
-        python compile_all.py
+        python compile_all.py compile
+
+    - name: Run tests
+      run: |
+        python compile_all.py run
