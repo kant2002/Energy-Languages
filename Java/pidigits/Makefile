@@ -1,6 +1,6 @@
 compile:
 	cp pidigits.java-2.java pidigits.java
-	javac -d .  pidigits.java
+	${JAVA_HOME_1_8}/bin/javac -d .  pidigits.java
 xmeasure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "/usr/local/src/jdk1.8.0_121/bin/java -Djava.library.path=Include/java  pidigits 10000" Java pidigits

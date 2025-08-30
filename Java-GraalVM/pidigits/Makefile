@@ -1,16 +1,16 @@
 compile:
 	cp pidigits.java-2.java pidigits.java
-	/usr/lib/graal/graalvm-ce-java8-20.0.0/bin/javac -d .  pidigits.java
+	${JAVA_HOME_20_0}/bin/javac -d .  pidigits.java
 xmeasure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "/usr/lib/graal/graalvm-ce-java8-20.0.0/bin/java -Djava.library.path=Include/java  pidigits 10000" Java pidigits
+	sudo ../../RAPL/main "${JAVA_HOME_20_0}/bin/java -Djava.library.path=Include/java  pidigits 10000" Java pidigits
 
 run:
-	/usr/lib/graal/graalvm-ce-java8-20.0.0/bin/java -Djava.library.path=Include/java  pidigits 10000
+	${JAVA_HOME_20_0}/bin/java -Djava.library.path=Include/java  pidigits 10000
 
 mem:
-	/usr/bin/time -v /usr/lib/graal/graalvm-ce-java8-20.0.0/bin/java -Djava.library.path=Include/java  pidigits 10000
+	/usr/bin/time -v ${JAVA_HOME_20_0}/bin/java -Djava.library.path=Include/java  pidigits 10000
 
 valgrind:
-	valgrind --tool=massif --stacks=yes /usr/lib/graal/graalvm-ce-java8-20.0.0/bin/java -Djava.library.path=Include/java  pidigits 10000
+	valgrind --tool=massif --stacks=yes ${JAVA_HOME_20_0}/bin/java -Djava.library.path=Include/java  pidigits 10000
 

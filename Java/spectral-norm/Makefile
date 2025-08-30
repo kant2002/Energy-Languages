@@ -1,6 +1,6 @@
 compile:
 	cp spectralnorm.java-2.java spectralnorm.java
-	javac -d .  spectralnorm.java
+	${JAVA_HOME_1_8}/bin/javac -d .  spectralnorm.java
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "java   spectralnorm 5500" Java spectral-norm
