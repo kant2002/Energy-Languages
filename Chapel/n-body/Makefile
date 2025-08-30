@@ -1,5 +1,5 @@
 compile:
-	chpl --fast nbody.chpl -o nbody.chapel_run
+	CC=clang CXX=clang++ chpl --fast nbody.chpl -o nbody.chapel_run
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./nbody.chapel_run --n=50000000" Chapel n-body

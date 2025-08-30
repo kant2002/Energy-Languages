@@ -1,5 +1,5 @@
 compile:
-	chpl --fast regexredux.chpl -o regexredux.chapel_run
+	CC=clang CXX=clang++ chpl --fast regexredux.chpl -o regexredux.chapel_run
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./regexredux.chapel_run --n=0 < ../../regexredux-input5000000.txt" Chapel regex-redux

@@ -1,5 +1,5 @@
 compile:
-	chpl --fast chameneosredux.chpl -o chameneosredux.chapel_run
+	CC=clang CXX=clang++ chpl --fast chameneosredux.chpl -o chameneosredux.chapel_run
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./chameneosredux.chapel_run --n=6000000"

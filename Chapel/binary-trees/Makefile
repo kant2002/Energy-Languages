@@ -1,6 +1,5 @@
 compile:
-	echo "CHPL_TARGET_COMPILER = ${CHPL_TARGET_COMPILER}"
-	chpl --fast binarytrees.chpl -o binarytrees.chapel_run
+	CC=clang CXX=clang++ chpl --fast binarytrees.chpl -o binarytrees.chapel_run
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./binarytrees.chapel_run --n=21" Chapel binary-trees

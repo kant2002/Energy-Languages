@@ -1,5 +1,5 @@
 compile:
-	chpl --fast revcomp.chpl -o revcomp.chapel_run
+	CC=clang CXX=clang++ chpl --fast revcomp.chpl -o revcomp.chapel_run
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./revcomp.chapel_run --n=0 < ../../revcomp-input25000000.txt" Chapel reverse-complement

@@ -1,5 +1,5 @@
 compile:
-	chpl --fast spectralnorm.chpl -o spectralnorm.chapel_run
+	CC=clang CXX=clang++ chpl --fast spectralnorm.chpl -o spectralnorm.chapel_run
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./spectralnorm.chapel_run --n=5500" Chapel spectral-norm

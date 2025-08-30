@@ -1,5 +1,5 @@
 compile:
-	chpl --fast knucleotide.chpl -o knucleotide.chapel_run
+	CC=clang CXX=clang++ chpl --fast knucleotide.chpl -o knucleotide.chapel_run
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./knucleotide.chapel_run --n=0 < knucleotide-input25000000.txt" Chapel k-nucleotide
