@@ -101,6 +101,12 @@ jobs:
         cd RAPL
         make
 
+    - name: Chapel setup
+      run: |
+        CC=clang CXX=clang++ chpl --version
+        CC=clang CXX=clang++ chpl --print-chpl-settings
+        clang --version
+
     - name: Build tests
       run: |
         eval $(opam env)
