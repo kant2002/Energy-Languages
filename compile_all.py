@@ -18,6 +18,10 @@ def main():
       continue
     if "node_modules" in root:
       continue
+    if "/bin" in root:
+      continue
+    if "/obj" in root:
+      continue
     print('Checking ' + root)
     if file_exists(os.path.join(root, ".runignore")):
       print('Skipping ' + root + ' since it is ignore using .runignore')
