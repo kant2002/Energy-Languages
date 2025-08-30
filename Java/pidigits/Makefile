@@ -3,14 +3,14 @@ compile:
 	${JAVA_HOME_1_8}/bin/javac -d .  pidigits.java
 xmeasure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "/usr/local/src/jdk1.8.0_121/bin/java -Djava.library.path=Include/java  pidigits 10000" Java pidigits
+	sudo ../../RAPL/main "${JAVA_HOME_1_8}/bin/java -Djava.library.path=Include/java  pidigits 10000" Java pidigits
 
 run:
-	/usr/local/src/jdk1.8.0_121/bin/java -Djava.library.path=Include/java  pidigits 10000
+	${JAVA_HOME_1_8}/bin/java -Djava.library.path=Include/java  pidigits 10000
 
 mem:
-	/usr/bin/time -v /usr/local/src/jdk1.8.0_121/bin/java -Djava.library.path=Include/java  pidigits 10000
+	/usr/bin/time -v ${JAVA_HOME_1_8}/bin/java -Djava.library.path=Include/java  pidigits 10000
 
 valgrind:
-	valgrind --tool=massif --stacks=yes /usr/local/src/jdk1.8.0_121/bin/java -Djava.library.path=Include/java  pidigits 10000
+	valgrind --tool=massif --stacks=yes ${JAVA_HOME_1_8}/bin/java -Djava.library.path=Include/java  pidigits 10000
 

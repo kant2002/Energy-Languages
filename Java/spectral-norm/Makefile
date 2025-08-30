@@ -6,10 +6,10 @@ measure:
 	sudo ../../RAPL/main "java   spectralnorm 5500" Java spectral-norm
 
 run:
-	/usr/local/src/jdk1.8.0_121/bin/java   spectralnorm 5500
+	${JAVA_HOME_1_8}/bin/java   spectralnorm 5500
 
 mem:
-	/usr/bin/time -v /usr/local/src/jdk1.8.0_121/bin/java   spectralnorm 5500
+	/usr/bin/time -v ${JAVA_HOME_1_8}/bin/java   spectralnorm 5500
 
 valgrind:
-	valgrind --tool=massif --stacks=yes /usr/local/src/jdk1.8.0_121/bin/java   spectralnorm 5500
+	valgrind --tool=massif --stacks=yes ${JAVA_HOME_1_8}/bin/java   spectralnorm 5500
