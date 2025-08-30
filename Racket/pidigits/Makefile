@@ -3,13 +3,13 @@ compile:
 
 measure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "/usr/local/src/racket-6.8/bin/racket ./compiled/pidigits.racket-2_racket.zo 10000" Racket pidigits
+	sudo ../../RAPL/main "racket ./compiled/pidigits.racket-2_racket.zo 10000" Racket pidigits
 
 run:
-	/usr/local/src/racket-6.8/bin/racket ./compiled/pidigits.racket-2_racket.zo 10000
+	racket ./compiled/pidigits.racket-2_racket.zo 10000
 
 mem:
-	/usr/bin/time -v /usr/local/src/racket-6.8/bin/racket ./compiled/pidigits.racket-2_racket.zo 10000
+	/usr/bin/time -v racket ./compiled/pidigits.racket-2_racket.zo 10000
 
 valgrind:
-	valgrind --tool=massif --stacks=yes  /usr/local/src/racket-6.8/bin/racket ./compiled/pidigits.racket-2_racket.zo 10000
+	valgrind --tool=massif --stacks=yes  racket ./compiled/pidigits.racket-2_racket.zo 10000

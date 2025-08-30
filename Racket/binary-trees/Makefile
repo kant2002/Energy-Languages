@@ -3,13 +3,13 @@ compile:
 	
 measure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "/usr/local/src/racket-6.8/bin/racket ./compiled/binarytrees.racket-3_racket.zo 21" Racket binary-trees
+	sudo ../../RAPL/main "racket ./compiled/binarytrees.racket-3_racket.zo 21" Racket binary-trees
 
 run:
-	/usr/local/src/racket-6.8/bin/racket ./compiled/binarytrees.racket-3_racket.zo 21
+	racket ./compiled/binarytrees.racket-3_racket.zo 21
 
 mem:
-	/usr/bin/time -v  /usr/local/src/racket-6.8/bin/racket ./compiled/binarytrees.racket-3_racket.zo 21
+	/usr/bin/time -v  racket ./compiled/binarytrees.racket-3_racket.zo 21
 
 valgrind:
-	valgrind --tool=massif --stacks=yes  /usr/local/src/racket-6.8/bin/racket ./compiled/binarytrees.racket-3_racket.zo 21
+	valgrind --tool=massif --stacks=yes  racket ./compiled/binarytrees.racket-3_racket.zo 21
