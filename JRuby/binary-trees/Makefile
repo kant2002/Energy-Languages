@@ -4,13 +4,13 @@ compile:
 
 measure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "/usr/local/src/jruby-9.1.7.0/bin/jruby -Xcompile.fastest=true -Xcompile.invokedynamic=true -J-server -J-Xmx2G binarytrees.rb 21" JRuby binary-trees
+	sudo ../../RAPL/main "${JRUBY_HOME}/ruby -Xcompile.fastest=true -Xcompile.invokedynamic=true -J-server -J-Xmx2G binarytrees.rb 21" JRuby binary-trees
 
 run:
-	/usr/local/src/jruby-9.1.7.0/bin/jruby -Xcompile.fastest=true -Xcompile.invokedynamic=true -J-server -J-Xmx2G binarytrees.rb 21
+	${JRUBY_HOME}/ruby -Xcompile.fastest=true -Xcompile.invokedynamic=true -J-server -J-Xmx2G binarytrees.rb 21
 
 mem:
-	/usr/bin/time -v /usr/local/src/jruby-9.1.7.0/bin/jruby -Xcompile.fastest=true -Xcompile.invokedynamic=true -J-server -J-Xmx2G binarytrees.rb 21
+	/usr/bin/time -v ${JRUBY_HOME}/ruby -Xcompile.fastest=true -Xcompile.invokedynamic=true -J-server -J-Xmx2G binarytrees.rb 21
 
 valgrind:
-	valgrind --tool=massif --stacks=yes /usr/local/src/jruby-9.1.7.0/bin/jruby -Xcompile.fastest=true -Xcompile.invokedynamic=true -J-server -J-Xmx2G binarytrees.rb 21
+	valgrind --tool=massif --stacks=yes ${JRUBY_HOME}/ruby -Xcompile.fastest=true -Xcompile.invokedynamic=true -J-server -J-Xmx2G binarytrees.rb 21
