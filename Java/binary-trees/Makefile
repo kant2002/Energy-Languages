@@ -1,6 +1,6 @@
 compile:
 	cp binarytrees.java-7.java binarytrees.java
-	javac -d .  binarytrees.java
+	${JAVA_HOME_1_8}/bin/javac -d .  binarytrees.java
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "/usr/local/src/jdk1.8.0_121/bin/java binarytrees 21" Java binary-trees

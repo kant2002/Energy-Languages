@@ -87,6 +87,14 @@ jobs:
         node-version: 24.x
     - run: npm install -g typescript
 
+    - name: Install Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: |
+          8
+          20
+
     - name: Prepare build env
       run: |
         pip install -r requirements.txt
@@ -101,11 +109,22 @@ jobs:
         cd RAPL
         make
 
-    - name: Chapel setup
+    - name: Chapel environment
       run: |
         CC=clang CXX=clang++ chpl --version
         CC=clang CXX=clang++ chpl --print-chpl-settings
         clang --version
+      if: false
+
+    - name: Java environment
+      run: |
+        javac -version
+        update-alternatives --list java
+        which javac
+        echo $JAVA_HOME_1_8
+        echo $JAVA_HOME_20_0        
+        ls $JAVA_HOME_1_8
+        ls $JAVA_HOME_20_0
 
     - name: Build tests
       run: |
