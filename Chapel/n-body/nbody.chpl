@@ -1,15 +1,15 @@
 /* The Computer Language Benchmarks Game
-   http://benchmarksgame.alioth.debian.org/
+   https://salsa.debian.org/benchmarksgame-team/benchmarksgame/
 
-   contributed by Albert Sidelnik and Brad Chamberlain
-   derived from the Java version by Mark C. Lewis and Chad Whipkey
+   contributed by Michael Ferguson
+   derived from the Chapel# version by Brad Chamberlain
 */
 
+use Math;                     // to get access to 'pi'
 
 config const n = 10000;       // The number of timesteps to simulate
 
-const pi = 3.141592653589793,
-      solarMass = 4 * pi**2,
+param solarMass = 4 * pi * pi,
       daysPerYear = 365.24;
 
 
@@ -24,9 +24,9 @@ record body {
 }
 
 //
-// the array of bodies that we'll be simulating
+// the bodies that we'll be simulating
 //
-var bodies = [/* sun */
+var bodies = (/* sun */
               new body(mass = solarMass),
 
               /* jupiter */
@@ -64,10 +64,9 @@ var bodies = [/* sun */
                                1.62824170038242295e-03 * daysPerYear,
                               -9.51592254519715870e-05 * daysPerYear),
                       mass =   5.15138902046611451e-05 * solarMass)
-              ];
+              );
 
-const numBodies = bodies.size;    // the number of bodies being simulated
-
+param numBodies = bodies.size;    // the number of bodies being simulated
 
 proc main() {
   initSun();                      // initialize the sun's velocity
@@ -85,28 +84,26 @@ proc main() {
 //
 proc initSun() {
   const p = + reduce (for b in bodies do (b.vel * b.mass));
-  bodies[1].vel = -p / solarMass;
+  bodies[0].vel = -p / solarMass;
 }
 
 //
 // advance the positions and velocities of all the bodies
 //
 proc advance(dt) {
-  for i in 1..numBodies {
-    for j in i+1..numBodies {
-      ref b1 = bodies[i],
-          b2 = bodies[j];
+  for param i in 0..<numBodies {
+    for param j in i+1..<numBodies {
+      const dpos = bodies[i].pos - bodies[j].pos,
+            dposNormSq = sumOfSquares(dpos),
+            mag = dt / (dposNormSq * sqrt(dposNormSq));
 
-      const dpos = b1.pos - b2.pos,
-            mag = dt / sqrt(sumOfSquares(dpos))**3;
-
-      b1.vel -= dpos * b2.mass * mag;
-      b2.vel += dpos * b1.mass * mag;
+      bodies[i].vel -= dpos * bodies[j].mass * mag;
+      bodies[j].vel += dpos * bodies[i].mass * mag;
     }
   }
 
-  for b in bodies do
-    b.pos += dt * b.vel;
+  for param i in 0..<numBodies do
+    bodies[i].pos += dt * bodies[i].vel;
 }
 
 //
@@ -115,15 +112,11 @@ proc advance(dt) {
 proc energy() {
   var e = 0.0;
 
-  for i in 1..numBodies {
-    const b1 = bodies[i];
-
-    e += 0.5 * b1.mass * sumOfSquares(b1.vel);
-
-    for j in i+1..numBodies {
-      const b2 = bodies[j];
-
-      e -= (b1.mass * b2.mass) / sqrt(sumOfSquares(b1.pos - b2.pos));
+  for i in 0..<numBodies {
+    e += 0.5 * bodies[i].mass * sumOfSquares(bodies[i].vel);
+    for j in i+1..<numBodies {
+      e -= (bodies[i].mass * bodies[j].mass)
+           / sqrt(sumOfSquares(bodies[i].pos - bodies[j].pos));
     }
   }
 
@@ -133,6 +126,6 @@ proc energy() {
 //
 // compute the sum of squares of a 3-tuple's elements
 //
-inline proc sumOfSquares(x) {
-  return x(1)**2 + x(2)**2 + x(3)**2;
+inline proc sumOfSquares((x,y,z)) {
+  return x**2 + y**2 + z**2;
 }
