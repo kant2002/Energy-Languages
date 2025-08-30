@@ -24,6 +24,10 @@ def main():
       continue
     if "/.source" in root:
       continue
+    if ".git" in root:
+      continue
+    if ".lua" in root:
+      continue
     print('Checking ' + root)
     if file_exists(os.path.join(root, ".runignore")):
       print('Skipping ' + root + ' since it is ignore using .runignore')
