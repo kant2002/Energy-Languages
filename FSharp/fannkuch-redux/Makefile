@@ -4,13 +4,13 @@ compile:
 
 measure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "/usr/bin/dotnet ./bin/Release/netcoreapp1.1/tmp.dll 12" FSharp fannkuch-redux
+	sudo ../../RAPL/main "/usr/bin/dotnet ./bin/Release/net8.0/tmp.dll 12" FSharp fannkuch-redux
 
 run:
-	/usr/bin/dotnet ./bin/Release/netcoreapp1.1/tmp.dll 12
+	/usr/bin/dotnet ./bin/Release/net8.0/tmp.dll 12
 
 mem:
-	/usr/bin/time -v  /usr/bin/dotnet ./bin/Release/netcoreapp1.1/tmp.dll 12
+	/usr/bin/time -v  /usr/bin/dotnet ./bin/Release/net8.0/tmp.dll 12
 
 valgrind:
-	valgrind --tool=massif --stacks=yes  /usr/bin/dotnet ./bin/Release/netcoreapp1.1/tmp.dll 12
+	valgrind --tool=massif --stacks=yes  /usr/bin/dotnet ./bin/Release/net8.0/tmp.dll 12
