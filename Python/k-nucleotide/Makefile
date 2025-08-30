@@ -4,10 +4,10 @@ compile:
 	cp knucleotide.python3-3.python3 knucleotide.python3-3.py
 measure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "python -OO knucleotide.python3-3.py 0 < ${THIS_FILE_DIR}../../knucleotide-input25000000.txt" Python k-nucleotide
+	sudo ../../RAPL/main "python -OO knucleotide.python3-3.py 0 < ${THIS_FILE_DIR}/../../knucleotide-input25000000.txt" Python k-nucleotide
 
 run:
-	python -OO knucleotide.python3-3.py 0 < ${THIS_FILE_DIR}../../knucleotide-input25000000.txt
+	python -OO knucleotide.python3-3.py 0 < ${THIS_FILE_DIR}/../../knucleotide-input25000000.txt
 
 mem:
-	/usr/bin/time -v python -OO knucleotide.python3-3.py 0 < ${THIS_FILE_DIR}../../knucleotide-input25000000.txt
+	/usr/bin/time -v python -OO knucleotide.python3-3.py 0 < ${THIS_FILE_DIR}/../../knucleotide-input25000000.txt
