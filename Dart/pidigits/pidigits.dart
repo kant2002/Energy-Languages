@@ -1,11 +1,8 @@
 /* The Computer Language Benchmarks Game
-   http://benchmarksgame.alioth.debian.org/
+   https://salsa.debian.org/benchmarksgame-team/benchmarksgame/
 
-   contributed by Sébastien Arnaud
+   contributed by Isaac Gouy, updated Alexander Fyodorov's Dart #2
 */
-
-import 'package:bignum/bignum.dart';
-import 'package:args/args.dart';
 
 String pad(i, last) {
   var res = i.toString(), count;
@@ -17,37 +14,40 @@ String pad(i, last) {
   return res;
 }
 
-void calculatePi(N) {
+void calculatePi(arg) {
   var i = 0, ns = 0;
 
-  BigInteger bigint_TEN = new BigInteger(10);
-  BigInteger k = BigInteger.ZERO;
-  BigInteger k1 = BigInteger.ONE;
-  BigInteger a = BigInteger.ZERO;
-  BigInteger d = BigInteger.ONE;
-  BigInteger m = BigInteger.ZERO;
-  BigInteger n = BigInteger.ONE;
-  BigInteger t = BigInteger.ZERO;
-  BigInteger u = BigInteger.ZERO;
+  final bigint_three = new BigInt.from(3);
+  final bigint_ten = new BigInt.from(10);
+
+  var k = BigInt.zero;
+  var k1 = BigInt.one;
+  var a = BigInt.zero;
+  var d = BigInt.one;
+  var m = BigInt.zero;
+  var n = BigInt.one;
+  var t = BigInt.zero;
+  var u = BigInt.one;
 
   while (true) {
-    k = k.add(BigInteger.ONE);
-    k1 = k1.add(BigInteger.TWO);
-    t = n.shiftLeft(1);
-    n = n.multiply(k);
-    a = a.add(t).multiply(k1);
-    d = d.multiply(k1);
+    k += BigInt.one;
+    k1 += BigInt.two;
+    t = n << 1;
+    n *= k;
+    a += t;
+    a *= k1;
+    d *= k1;
 
     if (a.compareTo(n) >= 0) {
-      m = n.multiply(BigInteger.THREE).add(a);
-      t = m.divide(d);
-      u = m.mod(d).add(n);
+      m = n * bigint_three + a;
+      t = m ~/ d;
+      u = m % d + n;
 
       if (d.compareTo(u) > 0) {
-        ns = ns * 10 + t.intValue();
+        ns = ns * 10 + t.toInt();
         i += 1;
 
-        var last = i >= N;
+        var last = i >= arg;
         if (i % 10 == 0 || last) {
           print(pad(ns, last) + '\t:$i');
           ns = 0;
@@ -55,18 +55,13 @@ void calculatePi(N) {
 
         if (last) break;
 
-        a = a.subtract(d.multiply(t)).multiply(bigint_TEN);
-        n = n.multiply(bigint_TEN);
+        a = (a - d * t) * bigint_ten;
+        n = n * bigint_ten;
       }
     }
   }
 }
 
 void main(List<String> arguments) {
-  ArgResults argResults;
-  ArgParser parser = new ArgParser();
-  argResults = parser.parse(arguments);
-
-  int N = int.parse(argResults.rest[0]);
-  calculatePi(N);
+  calculatePi( int.parse(arguments[0]) );
 }
