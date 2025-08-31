@@ -47,14 +47,14 @@ jobs:
         toolchain: stable
 
     - uses: ruby/setup-ruby@v1
-      name: Setup Ruby
-      with:
-        ruby-version: '3.4'
-
-    - uses: ruby/setup-ruby@v1
       name: Setup JRuby
       with:
         ruby-version: 'jruby'
+
+    - uses: ruby/setup-ruby@v1
+      name: Setup Ruby
+      with:
+        ruby-version: '3.4'
 
     - uses: ada-actions/toolchain@dev
       name: Setup Ada
@@ -139,6 +139,16 @@ jobs:
         echo ${JAVA_HOME_21_0}
         ls ${JAVA_HOME_1_8}
         ls ${JAVA_HOME_21_0}
+
+    - name: Ruby environment
+      run: |
+        ruby -v
+        which gem
+
+    - name: JRuby environment
+      run: |
+        jruby -v
+        which jgem
 
     - name: Build tests
       run: |
