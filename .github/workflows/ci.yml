@@ -101,28 +101,6 @@ jobs:
     - name: Install Lua
       uses: xpol/setup-lua@v0.3
 
-    - name: Prepare build env
-      run: |
-        pip install -r requirements.txt
-        sudo apt-get install -y libpcre3 libpcre3-dev libboost-regex-dev \
-          libhts-dev libapr1-dev libaprutil1-dev libgmp-dev luarocks libmpfr-dev \
-          build-essential
-        ./gen-input.sh
-        # OCaml specific setup of libraries.
-        opam install batteries
-        gem install gmp
-        cpan Math::GMP
-        pip install gmpy2
-        luarocks install lua-nums
-        echo "CHPL_TARGET_COMPILER=llvm" >> $GITHUB_ENV
-        echo "RUBY_HOME=/opt/hostedtoolcache/Ruby/3.4.5/x64/bin" >> $GITHUB_ENV
-        echo "JRUBY_HOME=/home/runner/.rubies/jruby-10.0.2.0/bin" >> $GITHUB_ENV
-
-    - name: Build RAPL
-      run: |
-        cd RAPL
-        make
-
     - name: Chapel environment
       run: |
         CC=clang CXX=clang++ chpl --version
@@ -150,9 +128,32 @@ jobs:
         jruby -v
         which jgem
 
+    - name: Prepare build env
+      run: |
+        pip install -r requirements.txt
+        sudo apt-get install -y libpcre3 libpcre3-dev libboost-regex-dev \
+          libhts-dev libapr1-dev libaprutil1-dev libgmp-dev luarocks libmpfr-dev \
+          build-essential
+        ./gen-input.sh
+        # OCaml specific setup of libraries.
+        opam install batteries
+        gem install gmp
+        cpan Math::GMP
+        pip install gmpy2
+        luarocks install --local lua-nums
+        echo "CHPL_TARGET_COMPILER=llvm" >> $GITHUB_ENV
+        echo "RUBY_HOME=/opt/hostedtoolcache/Ruby/3.4.5/x64/bin" >> $GITHUB_ENV
+        echo "JRUBY_HOME=/home/runner/.rubies/jruby-10.0.2.0/bin" >> $GITHUB_ENV
+
+    - name: Build RAPL
+      run: |
+        cd RAPL
+        make
+
     - name: Build tests
       run: |
         eval $(opam env)
+        luarocks path
         python compile_all.py compile
 
     - name: Run tests
