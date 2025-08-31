@@ -111,7 +111,7 @@ jobs:
         gem install gmp
         cpan Math::GMP
         pip install gmpy2
-        luarocks install lua-nums
+        #luarocks install lua-nums
         echo "CHPL_TARGET_COMPILER=llvm" >> $GITHUB_ENV
         echo "RUBY_HOME=/opt/hostedtoolcache/Ruby/3.4.5/x64/bin" >> $GITHUB_ENV
         echo "JRUBY_HOME=/home/runner/.rubies/jruby-10.0.2.0/bin" >> $GITHUB_ENV
