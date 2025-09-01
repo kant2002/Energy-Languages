@@ -98,8 +98,8 @@ jobs:
     - name: Install Dart
       uses: dart-lang/setup-dart@v1
 
-    - name: Install Lua
-      uses: xpol/setup-lua@v0.3
+    # - name: Install Lua
+    #   uses: xpol/setup-lua@v0.3
 
     - name: Chapel environment
       run: |
@@ -133,7 +133,7 @@ jobs:
         pip install -r requirements.txt
         sudo apt-get install -y libpcre3 libpcre3-dev libboost-regex-dev \
           libhts-dev libapr1-dev libaprutil1-dev libgmp-dev luarocks libmpfr-dev \
-          build-essential
+          build-essential lua5.3
         ./gen-input.sh
         # OCaml specific setup of libraries.
         opam install batteries
