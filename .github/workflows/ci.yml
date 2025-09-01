@@ -1,8 +1,47 @@
 name: Build
 
 on: 
-  - pull_request
-  - workflow_dispatch
+  #pull_request:
+  workflow_dispatch:
+    inputs:
+      language:
+        description: 'Select language to test (default: all)'     
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - Ada
+          - C
+          - C++
+          - Chapel
+          - CSharp
+          - Dart
+          - Erlang
+          - Fortran
+          - FSharp
+          - Go
+          - Hack
+          - Haskell
+          - Java
+          - Java-GraalVM
+          - JavaScript
+          - JRuby
+          - Julia
+          - Lisp
+          - Lua
+          - OCaml
+          - Pascal
+          - Perl
+          - PHP
+          - Python
+          - Racket
+          - Ruby
+          - Rust
+          - Smalltalk
+          - Swift
+          - TypeScript
+
 
 jobs:
   build:
@@ -152,18 +191,34 @@ jobs:
         cd RAPL
         make
 
-    - name: Build tests
+    - name: Build all tests
+      if: ${{ inputs.print_tags == 'all' }}
       run: |
         eval $(opam env)
         luarocks path
         python compile_all.py compile
 
-    - name: Run tests
+    - name: Build single language tests
+      if: ${{ inputs.print_tags != 'all' }}
+      run: |
+        eval $(opam env)
+        luarocks path
+        cd ${{ github.event.inputs.option }}
+        python compile_all.py compile
+
+    - name: Run all tests
+      if: ${{ inputs.print_tags == 'all' }}
+      run: |
+        python compile_all.py run
+
+    - name: Run single language tests
+      if: ${{ inputs.print_tags != 'all' }}
       run: |
         python compile_all.py run
 
     - name: Upload produced data
-      if: always()
+      # if: always()
+      if: false
       uses: actions/upload-artifact@v4
       with:
         path: .
