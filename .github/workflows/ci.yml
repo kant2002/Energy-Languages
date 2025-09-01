@@ -1,13 +1,13 @@
 name: Build
 
 on: 
-  #pull_request:
+  pull_request:
   workflow_dispatch:
     inputs:
       language:
         description: 'Select language to test (default: all)'     
         required: true
-        default: 'all'
+        default: 'CSharp'
         type: choice
         options:
           - all
