@@ -192,27 +192,27 @@ jobs:
         make
 
     - name: Build all tests
-      if: ${{ inputs.print_tags == 'all' }}
+      if: ${{ github.event.inputs.language == 'all' }}
       run: |
         eval $(opam env)
         luarocks path
         python compile_all.py compile
 
     - name: Build single language tests
-      if: ${{ inputs.print_tags != 'all' }}
+      if: ${{ github.event.inputs.language != 'all' }}
       run: |
         eval $(opam env)
         luarocks path
-        cd ${{ github.event.inputs.option }}
+        cd ${{ github.event.inputs.language }}
         python compile_all.py compile
 
     - name: Run all tests
-      if: ${{ inputs.print_tags == 'all' }}
+      if: ${{ github.event.inputs.language == 'all' }}
       run: |
         python compile_all.py run
 
     - name: Run single language tests
-      if: ${{ inputs.print_tags != 'all' }}
+      if: ${{ github.event.inputs.language != 'all' }}
       run: |
         python compile_all.py run
 
