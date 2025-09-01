@@ -82,10 +82,12 @@ jobs:
         echo "499ca0b4c2b022f99924544987b7ee3e86458ba2d7ce8ad3d0151bcabf8f09e5  chapel-2.5.0-1.ubuntu24.amd64.deb" | shasum -a 256 -c
         sudo apt-get install -y ./chapel-2.5.0-1.ubuntu24.amd64.deb
 
-    - uses: actions/setup-node@v4
+    - name: Install NodeJS
+      uses: actions/setup-node@v4
       with:
         node-version: 24.x
-    - run: npm install -g typescript
+    - name: Install TypeScript
+      run: npm install -g typescript
 
     - name: Install Java
       uses: actions/setup-java@v4
@@ -98,8 +100,8 @@ jobs:
     - name: Install Dart
       uses: dart-lang/setup-dart@v1
 
-    # - name: Install Lua
-    #   uses: xpol/setup-lua@v0.3
+    - name: Install Lua
+      uses: xpol/setup-lua@v0.3
 
     - name: Chapel environment
       run: |
@@ -133,7 +135,7 @@ jobs:
         pip install -r requirements.txt
         sudo apt-get install -y libpcre3 libpcre3-dev libboost-regex-dev \
           libhts-dev libapr1-dev libaprutil1-dev libgmp-dev luarocks libmpfr-dev \
-          build-essential lua5.3
+          build-essential
         ./gen-input.sh
         # OCaml specific setup of libraries.
         opam install batteries
