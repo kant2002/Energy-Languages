@@ -1,5 +1,6 @@
 import sys, os
 from subprocess import call, check_output, Popen, PIPE
+from lazyme.string import color_print
 
 path = '.'
 action = 'compile'
@@ -11,8 +12,29 @@ def file_exists(file_path):
         return os.path.isfile(file_path)
 
 def main():
+  has_error = False
   for root, dirs, files in os.walk(path):
-    print 'Checking' + root
+    if "_opam" in root:
+      continue
+    if "node_modules" in root:
+      continue
+    if "/bin" in root:
+      continue
+    if "/obj" in root:
+      continue
+    if "/.source" in root:
+      continue
+    if ".git" in root:
+      continue
+    if ".lua" in root:
+      continue
+    print('Checking ' + root)
+    if file_exists(os.path.join(root, ".runignore")):
+      print('Skipping ' + root + ' since it is ignore using .runignore')
+      continue
+    if file_exists(os.path.join(root, "..", ".runignore")):
+      print('Skipping ' + root + ' since it is ignore using parent .runignore')
+      continue
     makefile = os.path.join(root, "Makefile")
     if file_exists(makefile):
       cmd = 'cd ' + root + '; make ' + action
@@ -24,29 +46,32 @@ def main():
         if pipes.returncode != 0:
           # an error happened!
           err_msg = "%s. Code: %s" % (std_err.strip(), pipes.returncode)
-          print '[E] Error on ' + root + ': '
-          print err_msg
+          color_print('[E] Error on ' + root + ': ', color='red', bold=True)
+          print(err_msg)
+          has_error = True
         elif len(std_err):
           # return code is 0 (no error), but we may want to
           # do something with the info on std_err
           # i.e. logger.warning(std_err)
-          print '[OK]'
+          color_print('[OK]', color='green')
         else:
-          print '[OK]'
-    if action == 'measure':
-      call(['sleep', '5'])
+          color_print('[OK]', color='green')
+      if action == 'measure':
+        call(['sleep', '5'])
+  if has_error:
+    sys.exit(1)
 
 if __name__ == '__main__':
   if len(sys.argv) == 2:
     act = sys.argv[1]
     if (act == 'compile') | (act == 'run') | (act == 'clean') | (act == 'measure'):
-      print 'Performing \"' + act + '\" action...'
+      color_print('Performing \"' + act + '\" action...', color='yellow', bold=True)
       action = act
     else:
-      print 'Error: Unrecognized action \"' + act + '\"'
+      color_print('Error: Unrecognized action \"' + act + '\"', color='red')
       sys.exit(1)
   else:
-    print 'Performing \"compile\" action...'
+    color_print('Performing \"compile\" action...', color='yellow', bold=True)
     action = 'compile'
   
   main()
