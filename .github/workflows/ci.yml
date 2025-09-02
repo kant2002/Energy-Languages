@@ -1,5 +1,11 @@
 name: Build
 
+
+env:
+  # Default language to run.
+  # Keep consistent with default workflow_dispatch input language variable    
+  DEFAULT_LANG: CSharp
+
 on: 
   pull_request:
   workflow_dispatch:
@@ -191,29 +197,30 @@ jobs:
         cd RAPL
         make
 
-    - name: Build all tests
-      if: ${{ github.event.inputs.language == 'all' }}
-      run: |
-        eval $(opam env)
-        luarocks path
-        python compile_all.py compile
-
     - name: Build single language tests
-      if: ${{ github.event.inputs.language != 'all' }}
       run: |
         eval $(opam env)
         luarocks path
-        cd ${{ github.event.inputs.language }}
+        CURR_LANG=${{ github.event.inputs.language }}
+        if [ -z "$CURR_LANG" ]; then
+          CURR_LANG=$DEFAULT_LANG
+        fi
+        echo "Current language: $CURR_LANG"
+        if [ "$CURR_LANG" != "all" ]; then
+          cd $CURR_LANG
+        fi        
         python compile_all.py compile
-
-    - name: Run all tests
-      if: ${{ github.event.inputs.language == 'all' }}
-      run: |
-        python compile_all.py run
 
     - name: Run single language tests
-      if: ${{ github.event.inputs.language != 'all' }}
       run: |
+        CURR_LANG=${{ github.event.inputs.language }}
+        if [ -z "$CURR_LANG" ]; then
+          CURR_LANG=$DEFAULT_LANG
+        fi
+        echo "Current language: $CURR_LANG"
+        if [ "$CURR_LANG" != "all" ]; then
+          cd $CURR_LANG
+        fi
         python compile_all.py run
 
     - name: Upload produced data
