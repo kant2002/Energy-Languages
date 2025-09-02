@@ -4,7 +4,7 @@ name: Build
 env:
   # Default language to run.
   # Keep consistent with default workflow_dispatch input language variable    
-  DEFAULT_LANG: CSharp
+  DEFAULT_LANG: FSharp
 
 on: 
   pull_request:
@@ -13,7 +13,7 @@ on:
       language:
         description: 'Select language to test (default: all)'     
         required: true
-        default: 'CSharp'
+        default: 'FSharp'
         type: choice
         options:
           - all
