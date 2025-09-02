@@ -1,0 +1,231 @@
+name: Build
+
+
+env:
+  # Default language to run.
+  # Keep consistent with default workflow_dispatch input language variable    
+  DEFAULT_LANG: FSharp
+
+on: 
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      language:
+        description: 'Select language to test (default: all)'     
+        required: true
+        default: 'FSharp'
+        type: choice
+        options:
+          - all
+          - Ada
+          - C
+          - C++
+          - Chapel
+          - CSharp
+          - Dart
+          - Erlang
+          - Fortran
+          - FSharp
+          - Go
+          - Hack
+          - Haskell
+          - Java
+          - Java-GraalVM
+          - JavaScript
+          - JRuby
+          - Julia
+          - Lisp
+          - Lua
+          - OCaml
+          - Pascal
+          - Perl
+          - PHP
+          - Python
+          - Racket
+          - Ruby
+          - Rust
+          - Smalltalk
+          - Swift
+          - TypeScript
+
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        #os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    # Not specifying a version will attempt to install via global.json
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x'
+
+    - uses: fortran-lang/setup-fortran@v1
+      name: Setup Fortran
+      with:
+        compiler: intel
+        version: "2025.0"
+
+    - name: Setup Lisp
+      run: |
+        sudo apt-get install -y sbcl
+
+    - name: Install FPC
+      run: |
+        export DEBIAN_FRONTEND=noninteractive
+        sudo apt-get update
+        sudo apt-get install -y fpc
+
+    - uses: haskell-actions/setup@v2.8
+      name: Setup Haskell
+      with:
+        ghc-version: 9.12.2 
+
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+      name: Setup Rust
+      with:
+        toolchain: stable
+
+    - uses: ruby/setup-ruby@v1
+      name: Setup JRuby
+      with:
+        ruby-version: 'jruby'
+
+    - uses: ruby/setup-ruby@v1
+      name: Setup Ruby
+      with:
+        ruby-version: '3.4'
+
+    - uses: ada-actions/toolchain@dev
+      name: Setup Ada
+      with:
+        distrib: fsf
+        target: native
+
+    - name: Set-up OCaml
+      uses: ocaml/setup-ocaml@v3
+      with:
+        ocaml-compiler: "5.0"
+
+    - uses: erlangsters/setup-erlang@v1
+      with:
+        erlang-version: 27
+        install-rebar3: true
+
+    - uses: SwiftyLab/setup-swift@latest
+
+    - uses: actions-rkt/install@v1
+
+    - name: Install Chapel
+      run: |
+        curl -LO https://github.com/chapel-lang/chapel/releases/download/2.5.0/chapel-2.5.0-1.ubuntu24.amd64.deb
+        echo "499ca0b4c2b022f99924544987b7ee3e86458ba2d7ce8ad3d0151bcabf8f09e5  chapel-2.5.0-1.ubuntu24.amd64.deb" | shasum -a 256 -c
+        sudo apt-get install -y ./chapel-2.5.0-1.ubuntu24.amd64.deb
+
+    - name: Install NodeJS
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24.x
+    - name: Install TypeScript
+      run: npm install -g typescript
+
+    - name: Install Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: |
+          8
+          21
+
+    - name: Install Dart
+      uses: dart-lang/setup-dart@v1
+
+    - name: Install Lua
+      uses: xpol/setup-lua@v0.3
+
+    - name: Chapel environment
+      run: |
+        CC=clang CXX=clang++ chpl --version
+        CC=clang CXX=clang++ chpl --print-chpl-settings
+        clang --version
+      if: false
+
+    - name: Java environment
+      run: |
+        javac -version
+        update-alternatives --list java
+        which javac
+        echo ${JAVA_HOME_1_8}
+        echo ${JAVA_HOME_21_0}
+        ls ${JAVA_HOME_1_8}
+        ls ${JAVA_HOME_21_0}
+
+    - name: Ruby environment
+      run: |
+        ruby -v
+        which gem
+
+    - name: JRuby environment
+      run: |
+        jruby -v
+        which jgem
+
+    - name: Prepare build env
+      run: |
+        pip install -r requirements.txt
+        sudo apt-get install -y libpcre3 libpcre3-dev libboost-regex-dev \
+          libhts-dev libapr1-dev libaprutil1-dev libgmp-dev luarocks libmpfr-dev \
+          build-essential
+        ./gen-input.sh
+        # OCaml specific setup of libraries.
+        opam install batteries
+        gem install gmp
+        cpan Math::GMP
+        pip install gmpy2
+        #luarocks install --local --server=https://luarocks.org/dev lua-nums
+        echo "CHPL_TARGET_COMPILER=llvm" >> $GITHUB_ENV
+        echo "RUBY_HOME=/opt/hostedtoolcache/Ruby/3.4.5/x64/bin" >> $GITHUB_ENV
+        echo "JRUBY_HOME=/home/runner/.rubies/jruby-10.0.2.0/bin" >> $GITHUB_ENV
+
+    - name: Build RAPL
+      run: |
+        cd RAPL
+        make
+
+    - name: Build single language tests
+      run: |
+        eval $(opam env)
+        luarocks path
+        CURR_LANG=${{ github.event.inputs.language }}
+        if [ -z "$CURR_LANG" ]; then
+          CURR_LANG=$DEFAULT_LANG
+        fi
+        echo "Current language: $CURR_LANG"
+        if [ "$CURR_LANG" != "all" ]; then
+          cd $CURR_LANG
+        fi        
+        python compile_all.py compile
+
+    - name: Run single language tests
+      run: |
+        CURR_LANG=${{ github.event.inputs.language }}
+        if [ -z "$CURR_LANG" ]; then
+          CURR_LANG=$DEFAULT_LANG
+        fi
+        echo "Current language: $CURR_LANG"
+        if [ "$CURR_LANG" != "all" ]; then
+          cd $CURR_LANG
+        fi
+        python compile_all.py run
+
+    - name: Upload produced data
+      # if: always()
+      if: false
+      uses: actions/upload-artifact@v4
+      with:
+        path: .

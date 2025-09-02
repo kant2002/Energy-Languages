@@ -1,6 +1,6 @@
 compile:
 	cp spectralnorm.typescript spectralnorm.ts
-	/usr/local/src/node-v7.9.0-linux-x64/bin/tsc --alwaysStrict -t ESNEXT  spectralnorm.ts
+	tsc --alwaysStrict -t ESNEXT  spectralnorm.ts
 
 measure:
 	sudo modprobe msr

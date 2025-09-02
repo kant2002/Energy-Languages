@@ -1,180 +1,175 @@
 /* The Computer Language Benchmarks Game
-   http://benchmarksgame.alioth.debian.org/
+   https://salsa.debian.org/benchmarksgame-team/benchmarksgame/
 
-   contributed by James Wendel
+   contributed by Isaac Gouy based on Jeremy Zerfas's #5 C program 
+   Write buffered, naive parallel.
 */
 
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
-const String ALU =
-"GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGG"
-"GAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGA"
-"CCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAAT"
-"ACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCA"
-"GCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGG"
-"AGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCC"
-"AGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA";
+const width = 60;
+final nl = '\n'.codeUnitAt(0);
 
-final Frequency IUB = new Frequency(
-    ['a',  'c',  'g',  't',
-     'B',  'D',  'H',  'K',
-     'M',  'N',  'R',  'S',
-     'V',  'W',  'Y'],
-     [0.27, 0.12, 0.12, 0.27,
-      0.02, 0.02, 0.02, 0.02,
-      0.02, 0.02, 0.02, 0.02,
-      0.02, 0.02, 0.02,]);
+Uint8List repeatedSequence(String sequence, int size) {
+  final codes = sequence.codeUnits;
+  final codesLength = codes.length;
+  final lines = BytesBuilder();
 
-final Frequency HOMO_SAPIENS = new Frequency(
-    [ 'a',
-      'c',
-      'g',
-      't'],
-      [ 0.3029549426680,
-        0.1979883004921,
-        0.1975473066391,
-        0.3015094502008]);
-
-const int IM = 139968;
-const int IA = 3877;
-const int IC = 29573;
-
-const int LINE_LENGTH = 60;
-const int BUFFER_SIZE = (LINE_LENGTH + 1)*1024;
-
-const double oneOverIM = (1.0/ IM);
-
-class Frequency {
-  Uint8List chars;
-  Float64List probs;
-  int last;
-
-  double random(double max) {
-    last = (last * IA + IC) % IM;
-    return max * last * oneOverIM;
+  final codesExtended = Uint8List(codesLength + width);
+  for (var column = 0; column < codesLength + width; column++) {
+    codesExtended[column] = codes[column % codesLength];
   }
-
-  Frequency(List<String> charList, List<double> probList) {
-    chars = new Uint8List(charList.length);
-    for (int i=0; i < chars.length; i++) {
-      chars[i] = charList[i].codeUnitAt(0);
+  var offset = 0;
+  var line = Uint8List(width + 1);
+  line[width] = nl;
+  for (var currentSize = size; currentSize > 0;) {
+    var lineLength = width;
+    if (currentSize < width) {
+      lineLength = currentSize;
+      line = Uint8List(lineLength + 1); // Shorten fixed-size last line.
+      line[lineLength] = nl;
     }
-
-    probs = new Float64List(probList.length);
-    for (int i=0; i < probList.length; i++) {
-      probs[i] = probList[i];
-    }
-
-    makeCumulative();
+    line.setRange(0, lineLength, codesExtended, offset);
+    offset += lineLength;
+    if (offset > codesLength) offset -= codesLength;
+    lines.add(line);
+    currentSize -= lineLength;
   }
+  return lines.takeBytes();
+}
 
-  void makeCumulative() {
-    double cp = 0.0;
-    for (int i = 0; i < probs.length; i++) {
-      cp += probs[i];
-      probs[i] = cp;
-    }
+const iM = 139968;
+const iA = 3877;
+const iC = 29573;
+var seed = 42;
+
+double nextLcgNumber(int max) {
+  seed = (seed * iA + iC) % iM;
+  return max / iM * seed;
+}
+
+void forwardLcgSeed(int size) {
+  for (var i = 0; i < size; i++) {
+    seed = (seed * iA + iC) % iM;
   }
+}
 
-  int selectRandomIntoBuffer(Uint8List buffer, int bufferIndex, int nRandom) {
-    final int len = probs.length;
-
-    outer:
-    for (int rIndex = 0; rIndex < nRandom; rIndex++) {
-      double r = random(1.0);
-      for (int i = 0; i < len; i++) {
-        if (r < probs[i]) {
-          buffer[bufferIndex++] = chars[i];
-          continue outer;
-        }
+Uint8List weightedLcgSequence(
+    String codeString, List<double> probabilities, int size) {
+  final codes = codeString.codeUnits;
+  final lines = BytesBuilder();
+  var sum = 0.0;
+  for (var i = 0; i < probabilities.length; i++) {
+    sum += probabilities[i];
+    probabilities[i] = sum * iM;
+  }
+  var line = Uint8List(width + 1);
+  line[width] = nl;
+  for (var currentSize = size; currentSize > 0;) {
+    var lineLength = width;
+    if (currentSize < width) {
+      lineLength = currentSize;
+      line = Uint8List(lineLength + 1); // Shorten fixed-size last line.
+      line[lineLength] = nl;
+    }
+    final last = probabilities.length - 1;
+    for (var column = 0; column < lineLength; column++) {
+      final r = nextLcgNumber(iM);
+      var i = 0;
+      for (; i < last; i++) {
+        if (probabilities[i] > r) break;
       }
-
-      buffer[bufferIndex++] = chars[len-1];
+      line[column] = codes[i];
     }
-
-    return bufferIndex;
+    lines.add(line);
+    currentSize -= lineLength;
   }
+  return lines.takeBytes();
 }
 
-makeRepeatFasta(String id, String desc, String alu, int _nChars, IOSink writer) {
-  writer.write(">${id} ${desc}\n");
+void main(List<String> args) {
+  final mainIsolate = ReceivePort();
+  final n = (args.length > 0) ? int.parse(args[0]) : 1000;
 
-  int aluIndex = 0;
-  final List<int> aluCode = alu.codeUnits;
-  final int aluLength = aluCode.length;
+  Isolate.spawn(
+      other,
+      Request(
+          '>ONE Homo sapiens alu',
+          'GGCCGGGCGCGGTGGCTCACGCCT'
+              'GTAATCCCAGCACTTTGGGAGGCC'
+              'GAGGCGGGCGGATCACCTGAGGTC'
+              'AGGAGTTCGAGACCAGCCTGGCCA'
+              'ACATGGTGAAACCCCGTCTCTACT'
+              'AAAAATACAAAAATTAGCCGGGCG'
+              'TGGTGGCGCGCGCCTGTAATCCCA'
+              'GCTACTCGGGAGGCTGAGGCAGGA'
+              'GAATCGCTTGAACCCGGGAGGCGG'
+              'AGGTTGCAGTGAGCCGAGATCGCG'
+              'CCACTGCACTCCAGCCTGGGCGAC'
+              'AGAGCGAGACTCCGTCTCAAAAA',
+          [],
+          n * 2,
+          mainIsolate.sendPort));
 
-  Uint8List buffer = new Uint8List(BUFFER_SIZE);
+  Isolate.spawn(
+      another,
+      Request(
+          '>TWO IUB ambiguity codes',
+          'acgtBDHKMNRSVWY',
+          [0.27, 0.12, 0.12, 0.27, 0.02] +
+              [0.02, 0.02, 0.02, 0.02, 0.02] +
+              [0.02, 0.02, 0.02, 0.02, 0.02],
+          n * 3,
+          mainIsolate.sendPort));
 
-  int bufferIndex = 0;
-  int nChars = _nChars;
-  while (nChars > 0) {
-    final int chunkSize = nChars >= LINE_LENGTH ? LINE_LENGTH : nChars;
+  forwardLcgSeed(n * 3);
+  final sequenceThree = weightedLcgSequence(
+      'acgt',
+      [0.3029549426680, 0.1979883004921, 0.1975473066391, 0.3015094502008],
+      n * 5);
 
-    if (bufferIndex == BUFFER_SIZE) {
-      writer.add(new Uint8List.view(buffer.buffer, 0, bufferIndex));
-      buffer = new Uint8List(BUFFER_SIZE);
-      bufferIndex = 0;
-    }
-
-    if (aluIndex + chunkSize < aluLength) {
-      buffer.setRange(bufferIndex, bufferIndex+chunkSize, aluCode, aluIndex);
-      bufferIndex += chunkSize;
-      aluIndex += chunkSize;
+  SendPort? waiting;
+  var writeWaitingNext = false;
+  mainIsolate.listen((dynamic message) {
+    if (message is SendPort) {
+      waiting = message;
+      if (writeWaitingNext) {
+        waiting?.send(1);
+      }
+    } else if (writeWaitingNext = message == 1) {
+      waiting?.send(1);
     } else {
-      int len = aluLength - aluIndex;
-      buffer.setRange(bufferIndex, bufferIndex+len, aluCode, aluIndex);
-      bufferIndex += len;
-      aluIndex = 0;
-      len = chunkSize - len;
-      buffer.setRange(bufferIndex, bufferIndex+len, aluCode, aluIndex);
-      bufferIndex += len;
-      aluIndex += len;
+      stdout.writeln('>THREE Homo sapiens frequency');
+      stdout.add(sequenceThree);
+      mainIsolate.close();
     }
-
-    buffer[bufferIndex++] = 10;
-
-    nChars -= chunkSize;
-  }
-
-  writer.add(new Uint8List.view(buffer.buffer, 0, bufferIndex));
+  });
 }
 
-
-
-void makeRandomFasta(String id, String desc, Frequency fpf, int nChars, IOSink writer) {
-  writer.write(">${id} ${desc}\n");
-
-  Uint8List buffer = new Uint8List(BUFFER_SIZE);
-
-  int bufferIndex = 0;
-  while (nChars > 0) {
-    final int chunkSize = nChars >= LINE_LENGTH ? LINE_LENGTH : nChars;
-
-    if (bufferIndex == BUFFER_SIZE) {
-      writer.add(new Uint8List.view(buffer.buffer, 0, bufferIndex));
-      buffer = new Uint8List(BUFFER_SIZE);
-      bufferIndex = 0;
-    }
-
-    bufferIndex = fpf.selectRandomIntoBuffer(buffer, bufferIndex, chunkSize);
-    buffer[bufferIndex++] = 10;
-
-    nChars -= chunkSize;
-  }
-
-  writer.add(new Uint8List.view(buffer.buffer, 0, bufferIndex));
+void other(Request ini) {
+  stdout.writeln(ini.defLine);
+  stdout.add(repeatedSequence(ini.codes, ini.size));
+  ini.p.send(1);
 }
 
+void another(Request ini) {
+  final anotherIsolate = ReceivePort();
+  var bytes = weightedLcgSequence(ini.codes, ini.probabilities, ini.size);
+  ini.p.send(anotherIsolate.sendPort);
+  anotherIsolate.listen((dynamic _) {
+    stdout.writeln(ini.defLine);
+    stdout.add(bytes);
+    ini.p.send(0);
+  });
+}
 
-main(args) {
-  IOSink writer = stdout;
-
-  int n = args.length > 0 ? int.parse(args[0]) : 250;
-
-  makeRepeatFasta("ONE", "Homo sapiens alu", ALU, n * 2, writer);
-  IUB.last = 42;
-  makeRandomFasta("TWO", "IUB ambiguity codes", IUB, n * 3, writer);
-  HOMO_SAPIENS.last = IUB.last;
-  makeRandomFasta("THREE", "Homo sapiens frequency", HOMO_SAPIENS, n * 5, writer);
+class Request {
+  String defLine;
+  String codes;
+  List<double> probabilities;
+  int size;
+  SendPort p;
+  Request(this.defLine, this.codes, this.probabilities, this.size, this.p);
 }

@@ -134,7 +134,7 @@ contains
 
 !! Uses only one bigint division instead of two when checking a produced digit's validity.
 
-!!  integer function extract_digit()
+  integer function extract_digit()
 !!    if (mpz_cmp(numer, accum) > 0) then
 !!       extract_digit = -1
 !!       return

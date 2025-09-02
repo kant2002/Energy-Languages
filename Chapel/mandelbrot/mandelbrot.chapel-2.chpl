@@ -1,12 +1,12 @@
 /* The Computer Language Benchmarks Game
-   http://benchmarksgame.alioth.debian.org/
+   https://salsa.debian.org/benchmarksgame-team/benchmarksgame/
 
    contributed by Brad Chamberlain
    derived from the Swift version by Ralph Ganszky
      and the Chapel version by Nelson et al.
 */
 
-use DynamicIters;
+use DynamicIters, IO, Math;
 
 config const n = 200,             // image size in pixels (n x n)
              maxIter = 50,        // max # of iterations per pixel
@@ -18,10 +18,10 @@ type eltType = uint(bitsPerElt);  // element type used to store the image
 
 
 proc main() {
-  const xsize = divceilpos(n, bitsPerElt),  // the compacted x dimension
+  const xsize = divCeilPos(n, bitsPerElt),  // the compacted x dimension
         imgSpace = {0..#n, 0..#xsize};      // the compacted image size
 
-  var image : [imgSpace] eltType,           // the compacted image
+  var image: [imgSpace] eltType,            // the compacted image
       xval, yval: [0..#n] real;             // pre-computed (x,y) values
 
   // precompute (x, y) values from the complex plane
@@ -52,33 +52,25 @@ proc main() {
 
     // store 'bitsPerElt' pixels compactly into the final image
     var pixval: eltType;
-    for param i in 1..bitsPerElt do
-      if (Tr(i) + Ti(i) <= limit) then    // if 'C' is within the limit,
-        pixval |= 0x1 << (bitsPerElt-i);  //   turn the corresponding pixel on
+    for param i in 0..<bitsPerElt do
+      if (Tr(i) + Ti(i) <= limit) then      // if 'C' is within the limit,
+        pixval |= 0x1 << (bitsPerElt-i-1);  // turn the corresponding pixel on
 
     image[y, xelt] = pixval;
   }
 
-  // Get a lock-free writer channel on 'stdout'
-  var w = openfd(1).writer(iokind.native, locking=false);
-
   // Write the file header and the image array.
-  w.writef("P4\n");
-  w.writef("%i %i\n", n, n);
-  w.write(image);
+  stdout.writef("P4\n");
+  stdout.writef("%i %i\n", n, n);
+  stdout.writeBinary(image);
 }
 
 //
-// Helper functions to add/compare an 8-tuple and a singleton
+// Helper function to compare an 8-tuple and a singleton
 //
-inline proc +(cr, ci) {
-  return (cr(1)+ci, cr(2)+ci, cr(3)+ci, cr(4)+ci,
-          cr(5)+ci, cr(6)+ci, cr(7)+ci, cr(8)+ci);
-}
-
-inline proc >(x, y) {
-  for param i in 1..bitsPerElt do
-    if x(i) <= y then
+inline operator >(xs, y) {
+  for x in xs do
+    if x <= y then
       return false;
   return true;
 }

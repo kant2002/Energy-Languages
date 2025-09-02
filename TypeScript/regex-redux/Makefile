@@ -1,6 +1,6 @@
 compile:
 	cp regexredux.typescript-3.typescript regexredux.typescript-3.ts
-	/usr/local/src/node-v7.9.0-linux-x64/bin/tsc --alwaysStrict -t ESNEXT --lib es7 regexredux.typescript-3.ts
+	tsc --alwaysStrict -t ESNEXT --lib es7 regexredux.typescript-3.ts
 
 measure:
 	sudo modprobe msr

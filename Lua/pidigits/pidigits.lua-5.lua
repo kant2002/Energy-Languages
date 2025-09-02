@@ -1,59 +1,59 @@
 -- The Computer Language Benchmarks Game
--- http://benchmarksgame.alioth.debian.org/
--- contributed by Mike Pall
--- requires LGMP "A GMP package for Lua 5.1"
--- with matrix optimization, courtesy of Wim Couwenberg
+-- https://salsa.debian.org/benchmarksgame-team/benchmarksgame/
 
-local g, aux = {}, {}
-require"c-gmp"(g, aux)
-local add, mul, div = g.mpz_add, g.mpz_mul_si, g.mpz_tdiv_q
-local init, get = g.mpz_init_set_d, g.mpz_get_d
+-- Translated from Mr Ledrug's C program by Jeremy Zerfas.
+-- Transliterated from GMP to bn by Isaac Gouy
 
-local u, v, w
+local Lbn=require"bn"
+local add, sub, mul, div = Lbn.add, Lbn.sub, Lbn.mul, Lbn.div
+local set, get = Lbn.number, Lbn.tonumber
 
-local function produce(n1, n2, d, k)
-  mul(n1, 2*k-1, u)
-  add(n2, n2, v)
-  mul(n1, k-1, w)
-  add(u, v, n1)
-  mul(n2, k+2, u)
-  add(w, u, n2)
-  mul(d, 2*k+1, d)
-end
+local tmp1, tmp2, acc, den, num
 
-local function extract(n1, n2, d, y)
-  mul(d, -10*y, u)
-  mul(n1, 10, n1)
-  add(n1, u, n1)
-  mul(n2, 10, n2)
-  add(n2, u, n2)
-end
+local function extractDigit(nth)
+    tmp1 = mul(num, nth)
+    tmp2 = add(tmp1, acc)
+    tmp1 = div(tmp2, den)
+    return tmp1
+end    
 
-local function digit(n1, n2, d)
-  local y = get(div(n1, d, u))
-  if y == get(div(n2, d, v)) then return y end
-end
+local function eliminateDigit(d)
+    acc = sub(acc, mul(den, d))
+    acc = mul(acc, 10)
+    num = mul(num, 10)
+end       
 
--- Generate successive digits of PI.
-local function pidigits(N)
-  local write = io.write
-  local k = 1
-  local n1, n2, d = init(4), init(3), init(1)
-  u, v, w = init(0), init(0), init(0)
-  local i = 0
-  while i < N do
-    local y = digit(n1, n2, d)
-    if y then
-      write(y)
-      i = i + 1; if i % 10 == 0 then write("\t:", i, "\n") end
-      extract(n1, n2, d, y)
-    else
-      produce(n1, n2, d, k)
-      k = k + 1
-    end
-  end
-  if i % 10 ~= 0 then write(string.rep(" ", 10 - N % 10), "\t:", N, "\n") end
-end
+local function nextTerm(k)
+    k2 = k * 2 + 1
+    acc = add(acc, mul(num, 2))
+    acc = mul(acc, k2)
+    den = mul(den, k2)
+    num = mul(num, k)
+end    
 
-local N = tonumber(arg and arg[1]) or 27
-pidigits(N)
+local function main(n)
+    local write = io.write
+    tmp1 = set(0)
+    tmp2 = set(0)
+    acc = set(0)
+    den = set(1)
+    num = set(1)
+    i = 0
+    k = 0
+    while i < n do
+        k = k + 1
+        nextTerm(k)
+        if num > acc then goto continue end
+        
+        d = extractDigit(3)
+        if d ~= extractDigit(4) then goto continue end
+        
+        write(get(d))
+        i = i + 1; if i % 10 == 0 then write("\t:", i, "\n") end
+        eliminateDigit(d)              
+        ::continue::
+    end         
+    if i % 10 ~= 0 then write(string.rep(" ", 10 - n % 10), "\t:", n, "\n") end    
+end 
+
+main(tonumber(arg and arg[1]) or 27)

@@ -1,14 +1,16 @@
+THIS_FILE_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 compile:
 
 xmeasure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "/usr/local/src/lua-5.3.3/bin/lua  regexredux.lua-2.lua 0 < ../../regexredux-input50000.txt" Lua regex-redux
+	sudo ../../RAPL/main "lua  regexredux.lua-2.lua 0 < ${THIS_FILE_DIR}/../../regexredux-input5000000.txt" Lua regex-redux
 
 run:
-	/usr/local/src/lua-5.3.3/bin/lua  regexredux.lua-2.lua 0 < ../../regexredux-input50000.txt
+	lua  regexredux.lua-2.lua 0 < ${THIS_FILE_DIR}/../../regexredux-input5000000.txt
 
 mem:
-	/usr/bin/time -v /usr/local/src/lua-5.3.3/bin/lua  regexredux.lua-2.lua 0 < ../../regexredux-input50000.txt
+	/usr/bin/time -v lua  regexredux.lua-2.lua 0 < ${THIS_FILE_DIR}/../../regexredux-input5000000.txt
 
 valgrind:
-	valgrind --tool=massif --stacks=yes /usr/local/src/lua-5.3.3/bin/lua  regexredux.lua-2.lua 0 < ../../regexredux-input50000.txt
+	valgrind --tool=massif --stacks=yes lua  regexredux.lua-2.lua 0 < ${THIS_FILE_DIR}/../../regexredux-input5000000.txt

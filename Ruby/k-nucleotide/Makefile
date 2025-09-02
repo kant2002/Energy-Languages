@@ -1,15 +1,17 @@
+THIS_FILE_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 compile:
 
 
 measure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "/usr/local/src/ruby/bin/ruby -W0 knucleotide.yarv-7.yarv 0 < knucleotide-input25000000.txt" Ruby k-nucleotide
+	sudo ../../RAPL/main "${RUBY_HOME}/ruby -W0 knucleotide.yarv-7.yarv 0 < ${THIS_FILE_DIR}/../../knucleotide-input25000000.txt" Ruby k-nucleotide
 
 run:
-	/usr/local/src/ruby/bin/ruby -W0 knucleotide.yarv-7.yarv 0 < knucleotide-input25000000.txt
+	${RUBY_HOME}/ruby -W0 knucleotide.yarv-7.yarv 0 < ${THIS_FILE_DIR}/../../knucleotide-input25000000.txt
 
 mem:
-	/usr/bin/time -v /usr/local/src/ruby/bin/ruby -W0 knucleotide.yarv-7.yarv 0 < knucleotide-input25000000.txt
+	/usr/bin/time -v ${RUBY_HOME}/ruby -W0 knucleotide.yarv-7.yarv 0 < ${THIS_FILE_DIR}/../../knucleotide-input25000000.txt
 
 valgrind:
-	valgrind --tool=massif --stacks=yes /usr/local/src/ruby/bin/ruby -W0 knucleotide.yarv-7.yarv 0 < knucleotide-input25000000.txt
+	valgrind --tool=massif --stacks=yes ${RUBY_HOME}/ruby -W0 knucleotide.yarv-7.yarv 0 < ${THIS_FILE_DIR}/../../knucleotide-input25000000.txt

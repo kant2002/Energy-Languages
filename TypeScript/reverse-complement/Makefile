@@ -1,6 +1,6 @@
 compile:
 	cp revcomp.typescript revcomp.ts
-	/usr/local/src/node-v7.9.0-linux-x64/bin/tsc --alwaysStrict -t ESNEXT  revcomp.ts
+	tsc --alwaysStrict -t ESNEXT  revcomp.ts
 	
 xmeasure:
 	sudo modprobe msr

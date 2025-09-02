@@ -1,5 +1,5 @@
 /* The Computer Language Benchmarks Game
- http://benchmarksgame.alioth.debian.org/
+ https://salsa.debian.org/benchmarksgame-team/benchmarksgame/
  contributed by Ralph Ganszky
  modified for Swift 3.0 by Daniel Muellenborn
  */
@@ -155,7 +155,7 @@ let queue = DispatchQueue.global(qos: .default)
 DispatchQueue.concurrentPerform(iterations: n) { y in
    let ci = yvals[y]
    for x in stride(from: 0, to: N, by: 8) {
-      var cr = Vec8(xvals[x+0], xvals[x+1], xvals[x+2], xvals[x+3],
+      let cr = Vec8(xvals[x+0], xvals[x+1], xvals[x+2], xvals[x+3],
                     xvals[x+4], xvals[x+5], xvals[x+6], xvals[x+7])
       rows[y*N/8+x/8] = mand8(cr, ci)
    }
@@ -176,4 +176,4 @@ let _ = rows.withUnsafeMutableBufferPointer {
 
 iov[1].iov_len = rows.count
 writev(STDOUT_FILENO, iov, 2)
-iov.deallocate(capacity: 2)
+iov.deallocate()

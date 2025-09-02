@@ -67,7 +67,7 @@ let make_array n x =
             (Unix.openfile "/dev/zero" [Unix.O_RDWR] 0o755)
             float64 c_layout true n in
     for i = 0 to n - 1 do v.{i} <- x done;
-    v
+  v
 
 let eval_AtA_times_u u v =
   let w = make_array (Array1.dim u) 0.0 in
